@@ -1,5 +1,6 @@
-import { Controller, Delete, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { OptionalAuthGuard } from 'src/auth/optional-auth.guard';
 import { User } from 'src/auth/user.decorator';
 import { UserEntity } from 'src/entities/user.entity';
 import { UserService } from './user.service';
@@ -9,6 +10,7 @@ export class ProfileController {
     constructor(private userService: UserService) { }
 
     @Get('/:username')
+    @UseGuards(new OptionalAuthGuard())
     async findProfile(@Param('username') username: string) {
         const profile = await this.userService.findByUserName(username);
         if (!profile) {
@@ -18,6 +20,7 @@ export class ProfileController {
     }
 
     @Post('/:username/follow')
+    @HttpCode(200)
     @UseGuards(AuthGuard())
     async followUser(@User() user: UserEntity, @Param('username') username: string) {
         const profile = await this.userService.followUser(user, username);

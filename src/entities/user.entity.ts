@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { classToPlain, Exclude } from "class-transformer";
 import { IsEmail } from "class-validator";
 import { AbstractEntity } from "./abstract-entity";
+import { ProfileResponse } from "src/models/user.model";
 
 @Entity('users')
 export class UserEntity extends AbstractEntity {
@@ -24,11 +25,11 @@ export class UserEntity extends AbstractEntity {
     password: string;
 
     @JoinTable()
-    @ManyToMany(type => UserEntity, user => user.following)
+    @ManyToMany(type => UserEntity, user => user.follows)
     followers: UserEntity[];
 
     @ManyToMany(type => UserEntity, user => user.followers)
-    following: UserEntity[];
+    follows: UserEntity[];
 
     @BeforeInsert()
     async hashPassword() {
@@ -43,9 +44,12 @@ export class UserEntity extends AbstractEntity {
         return classToPlain(this);
     }
 
-    toProfile(user: UserEntity) {
-        const following = this.followers.includes(user);
-        const profile = this.toJSON();
+    toProfile(user?: UserEntity): ProfileResponse {
+        let following = null;
+        if (user) {
+            following = this.followers.includes(user);
+        }
+        const profile: any = this.toJSON();
         delete profile.followers;
         return { ...profile, following };
     }

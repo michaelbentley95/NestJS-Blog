@@ -16,7 +16,7 @@ export class AuthService {
             await user.save();
             const payload = { username: user.username };
             const token = this.jwtService.sign(payload);
-            return { user: { ...user.toJSON, token } };
+            return { user: { ...user.toJSON(), token } };
         }
         catch (err) {
             if (err.code === '23505') {
@@ -28,8 +28,8 @@ export class AuthService {
 
     async login(credentials: LoginDTO) {
         try {
-            const user = await this.userRepo.findOne({ where: { email: credentials.email } })
-            if (user && await user.comparePassword(credentials.password)) {
+            const user = await this.userRepo.findOne({ where: { email: credentials.email } });
+            if (user && (await user.comparePassword(credentials.password))) {
                 const payload = { username: user.username };
                 const token = this.jwtService.sign(payload);
                 return { user: { ...user.toJSON(), token } };
