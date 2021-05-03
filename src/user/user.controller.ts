@@ -13,12 +13,12 @@ export class UserController {
     @Get()
     @UseGuards(AuthGuard())
     async getCurrentUser(@User() user: UserEntity) {
-        return await this.userService.findByUserName(user.username);
+        return { user: await this.userService.findByUserName(user.username) };
     }
 
     @Put()
     @UseGuards(AuthGuard())
-    async update(@User() user: UserEntity, @Body(new ValidationPipe({ transform: true, whitelist: true })) data: UpdateUserDTO) {
-        return await this.userService.updateUser(user.username, data);
+    async update(@User() user: UserEntity, @Body(new ValidationPipe({ transform: true, whitelist: true })) data: { user: UpdateUserDTO }) {
+        return { user: await this.userService.updateUser(user.username, data.user) };
     }
 }

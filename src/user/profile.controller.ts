@@ -11,8 +11,8 @@ export class ProfileController {
 
     @Get('/:username')
     @UseGuards(new OptionalAuthGuard())
-    async findProfile(@Param('username') username: string) {
-        const profile = await this.userService.findByUserName(username);
+    async findProfile(@Param('username') username: string, @User() user: UserEntity) {
+        const profile = await this.userService.findByUserName(username, user);
         if (!profile) {
             throw new NotFoundException();
         }
