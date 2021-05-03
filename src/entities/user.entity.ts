@@ -33,7 +33,6 @@ export class UserEntity extends AbstractEntity {
     follows: UserEntity[];
 
     @ManyToMany(type => ArticleEntity, article => article.favoritedBy)
-    @JoinColumn()
     favorites: UserEntity[];
 
     @OneToMany(type => ArticleEntity, article => article.author)
