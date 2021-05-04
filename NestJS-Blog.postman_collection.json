@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c9c1e761-e59d-40f8-9aa0-9dd32ae49f89",
+		"_postman_id": "ee31b46c-cb93-4574-b971-28c70075f1fc",
 		"name": "NestJS-Blog",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,7 +27,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"username\",\r\n    \"email\":\"jake@jake.jae\",\r\n    \"password\":\"password\"\r\n}",
+							"raw": "{\r\n    \"user\": {\r\n        \"username\":\"username\",\r\n        \"email\":\"jake@jake.asdf\",\r\n        \"password\":\"password\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -67,7 +67,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"jake@jake.jake\",\r\n    \"password\":\"password\"\r\n}",
+							"raw": "{\r\n    \"user\": {\r\n        \"email\":\"jake@jake.jake\",\r\n        \"password\":\"password\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -242,7 +242,13 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
@@ -257,6 +263,71 @@
 								"api",
 								"profiles",
 								"jake"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "Create Article",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"article\": {\r\n    \"title\": \"How to train your dragon 12\",\r\n    \"description\": \"Ever wonder how?\",\r\n    \"body\": \"You have to believe\",\r\n    \"tagList\": [\"reactjs\", \"angularjs\", \"dragons\"]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/api/articles",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Article",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:4000/api/articles/how-to-train-your-dragon-6yu9sj",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"articles",
+								"how-to-train-your-dragon-6yu9sj"
 							]
 						}
 					},
