@@ -1,6 +1,6 @@
-import { AfterLoad, BeforeInsert, Column, Entity, ManyToMany, ManyToOne } from "typeorm";
+import { AfterLoad, BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { AbstractEntity } from "./abstract-entity";
-import slugify from "slug";
+const slug = require("slug");
 import { UserEntity } from "./user.entity";
 import { classToPlain } from "class-transformer";
 
@@ -11,12 +11,13 @@ export class ArticleEntity extends AbstractEntity {
     title: string;
     @Column()
     description: string;
-    @Column()
+    @Column({ unique: true })
     slug: string;
     @Column()
     body: string;
 
     @ManyToMany(type => UserEntity, user => user.favorites, { eager: true })
+    @JoinTable()
     favoritedBy: UserEntity[]
 
     favoriteCount: number;
@@ -29,17 +30,17 @@ export class ArticleEntity extends AbstractEntity {
 
     @AfterLoad()
     async countFavorites() {
-        const { count } = await UserEntity.createQueryBuilder('favorite')
-            .where('favorites.id = :id', { id: this.id })
-            .select('COUNT(*)', 'count')
-            .getRawOne()
+        // const { count } = await UserEntity.createQueryBuilder('favorite')
+        //     .where('favorites.id = :id', { id: this.id })
+        //     .select('COUNT(*)', 'count')
+        //     .getRawOne()
 
-        this.favoriteCount = count
+        this.favoriteCount = 0;
     }
 
     @BeforeInsert()
     generateSlug() {
-        this.slug = slugify(this.title, { lower: true }) + '-' + (Math.random() * Math.pow(36, 6) | 0).toString(36);
+        this.slug = slug(this.title, { lower: true }) + '-' + (Math.random() * Math.pow(36, 6) | 0).toString(36);
     }
 
     toJSON() {
@@ -48,7 +49,7 @@ export class ArticleEntity extends AbstractEntity {
 
     toArticle(user?: UserEntity) {
         let favorited = null;
-        if (user) {
+        if (user && this.favoritedBy) {
             favorited = this.favoritedBy.some(favorited => favorited.id === user.id);
         }
         const article: any = this.toJSON();
