@@ -1,14 +1,29 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { query } from 'express';
 import { OptionalAuthGuard } from 'src/auth/optional-auth.guard';
 import { User } from 'src/auth/user.decorator';
 import { UserEntity } from 'src/entities/user.entity';
-import { CreateArticleDTO, UpdateArticleDTO } from 'src/models/article.model';
+import { CreateArticleDTO, GetAllQuery, GetFeedQuery, UpdateArticleDTO } from 'src/models/article.model';
 import { ArticleService } from './article.service';
 
 @Controller('articles')
 export class ArticleController {
     constructor(private articleService: ArticleService) { }
+
+    @Get()
+    @UseGuards(new OptionalAuthGuard())
+    async getAll(@User() user: UserEntity, @Query() query: GetAllQuery) {
+        const articles = await this.articleService.getAll(user, query);
+        return { articles, articleCount: articles.length };
+    }
+
+    @Get('/feed')
+    @UseGuards(AuthGuard())
+    async getFeed(@User() user: UserEntity, @Query() query: GetFeedQuery) {
+        const articles = await this.articleService.getFeed(user, query);
+        return { articles, articleCount: articles.length };
+    }
 
     @Get('/:slug')
     @UseGuards(new OptionalAuthGuard())

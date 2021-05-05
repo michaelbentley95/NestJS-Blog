@@ -33,3 +33,14 @@ export class UpdateArticleDTO {
     @IsOptional()
     tagList: string[];
 }
+
+export interface GetFeedQuery {
+    limit?: number;
+    offset?: number;
+}
+
+export interface GetAllQuery extends GetFeedQuery {
+    tag?: string;
+    author?: string;
+    favorited?: string;
+}
